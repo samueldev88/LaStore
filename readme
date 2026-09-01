@@ -1,0 +1,51 @@
+# LaStore 🛒
+
+Loja virtual de tecnologia **fictícia**, desenvolvida como projeto de portfólio para praticar front-end puro (HTML, CSS e JavaScript), sem uso de frameworks JS ou back-end.
+
+> ⚠️ **Este é um projeto demonstrativo.** Não há backend, pagamento real ou banco de dados — os dados de carrinho, favoritos e login ficam salvos apenas no `localStorage` do navegador.
+
+## 🔗 Demo
+
+👉 [Ver site no GitHub Pages](#) <!-- substitua pelo link depois de ativar o GitHub Pages -->
+
+## ✨ Funcionalidades
+
+- Catálogo de produtos com cards responsivos
+- Carrinho de compras (adicionar, alterar quantidade, remover, total automático)
+- Lista de favoritos
+- Busca com autocomplete
+- Login e cadastro simulados, com validação de senha forte em tempo real
+- Sistema de notificações (toasts)
+- Menu lateral (offcanvas) com estado de usuário logado/deslogado
+- Aviso ao clicar em um produto informando que os detalhes não estão disponíveis (site de demonstração)
+
+## 🛠️ Tecnologias
+
+- HTML5
+- CSS3 (variáveis CSS, layout responsivo)
+- JavaScript (Vanilla JS, sem frameworks)
+- [Bootstrap 5](https://getbootstrap.com/) — componentes de offcanvas e grid
+- `localStorage` — persistência de carrinho e favoritos
+
+## 📁 Estrutura do projeto
+
+```
+lastore/
+├── index.html    # estrutura da página
+├── style.css     # estilos
+└── script.js     # lógica (carrinho, favoritos, busca, auth, toasts)
+```
+
+## ▶️ Como rodar localmente
+
+Como é um projeto 100% front-end, basta abrir o `index.html` no navegador — não precisa de servidor ou instalação.
+
+```bash
+git clone https://github.com/seu-usuario/lastore.git
+cd lastore
+# abra o index.html no navegador
+```
+
+## 📌 Status
+
+Projeto em desenvolvimento contínuo, usado para estudo e evolução de habilidades de front-end.

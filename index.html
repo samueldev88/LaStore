@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>LaStore | Tecnologia e Inovação</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<!-- TOASTS -->
+<div class="toast-stack" id="toastStack"></div>
+
+<header>
+
+<nav class="navbar navbar-expand-lg fixed-top">
+<div class="container d-flex align-items-center justify-content-between">
+
+<a class="navbar-brand" href="#">
+LaStore
+</a>
+
+<div class="nav-icons">
+
+<button class="icon-btn" id="searchToggleBtn" onclick="toggleSearch()" aria-label="Pesquisar" title="Pesquisar">
+<svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+</button>
+
+<button class="icon-btn" id="wishlistBtn" data-bs-toggle="offcanvas" data-bs-target="#favoritos" aria-label="Favoritos" title="Favoritos">
+<svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"></path></svg>
+<span class="cart-badge d-none" id="favCount">0</span>
+</button>
+
+<button class="icon-btn" data-bs-toggle="offcanvas" data-bs-target="#carrinho" aria-label="Carrinho" title="Carrinho">
+<svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h12l1 12H5L6 8z"></path><path d="M9 8V6a3 3 0 0 1 6 0v2"></path></svg>
+<span class="cart-badge d-none" id="cartCount">0</span>
+</button>
+
+<button class="icon-btn" id="menuToggleBtn" onclick="abrirMenu()" aria-label="Menu" title="Menu">
+<svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+</button>
+
+</div>
+
+</div>
+
+<!-- BARRA DE BUSCA -->
+<div class="search-bar-wrap" id="searchBarWrap">
+<div class="container">
+<div class="search-input-group">
+<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+<input type="text" id="searchInput" class="form-control" placeholder="Buscar produtos..." oninput="handleSearchInput()" autocomplete="off">
+</div>
+<div class="search-suggestions" id="searchSuggestions"></div>
+</div>
+</div>
+
+</nav>
+
+</header>
+
+<main>
+
+<section id="home" class="hero">
+
+<div class="container">
+
+<h1>Tecnologia para o seu dia a dia</h1>
+
+<p>
+Os melhores smartphones, notebooks e acessórios com preços competitivos e entrega rápida para todo o Brasil.
+</p>
+
+<a href="#produtos" class="btn btn-primary">
+Ver Produtos
+</a>
+
+</div>
+
+</section>
+
+<section id="produtos" class="py-5">
+
+<div class="container">
+
+<h2 class="section-title">
+Produtos em Destaque
+</h2>
+
+<div class="row g-4">
+
+<div class="col-md-6 col-lg-4">
+
+<div class="card card-clickable" onclick="abrirDetalhesProduto(event)">
+
+<button
+class="fav-btn"
+onclick="event.stopPropagation(); toggleFavorito(this)"
+data-id="galaxy-a16"
+data-name="Samsung Galaxy A16 128GB"
+data-price="783.40"
+data-img="https://horizonplay.fbitsstatic.net/img/p/smartphone-samsung-galaxy-a16-sm-a165m-dual-sim-de-128gb-4gb-ram-de-6-7-50-5-2mp-13mp-light-gray-152478/339081.jpg?w=670&h=670&v=202501231555"
+title="Favoritar">
+<svg class="icon-outline" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"></path></svg>
+<svg class="icon-filled" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12 21s-6.7-4.35-9.3-8.1C1 10.1 1.6 6.6 4.6 5a5.4 5.4 0 0 1 7.4 1.7A5.4 5.4 0 0 1 19.4 5c3 1.6 3.6 5.1 1.9 7.9C18.7 16.65 12 21 12 21z"></path></svg>
+</button>
+
+<img
+src="https://horizonplay.fbitsstatic.net/img/p/smartphone-samsung-galaxy-a16-sm-a165m-dual-sim-de-128gb-4gb-ram-de-6-7-50-5-2mp-13mp-light-gray-152478/339081.jpg?w=670&h=670&v=202501231555"
+class="card-img-top">
+
+<div class="card-body d-flex flex-column">
+
+<h5 class="card-title">
+Samsung Galaxy A16 128GB
+</h5>
+
+<p class="price">
+R$ 783,40
+</p>
+
+<button
+class="btn btn-cart mt-auto"
+onclick="event.stopPropagation(); addToCart(this)"
+data-id="galaxy-a16"
+data-name="Samsung Galaxy A16 128GB"
+data-price="783.40"
+data-img="https://horizonplay.fbitsstatic.net/img/p/smartphone-samsung-galaxy-a16-sm-a165m-dual-sim-de-128gb-4gb-ram-de-6-7-50-5-2mp-13mp-light-gray-152478/339081.jpg?w=670&h=670&v=202501231555">
+<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+<span>Adicionar ao Carrinho</span>
+</button>
+
+</div>
+</div>
+</div>
+
+<div class="col-md-6 col-lg-4">
+
+<div class="card card-clickable" onclick="abrirDetalhesProduto(event)">
+
+<button
+class="fav-btn"
+onclick="event.stopPropagation(); toggleFavorito(this)"
+data-id="galaxy-book-go"
+data-name="Samsung Galaxy Book Go"
+data-price="2789.10"
+data-img="https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcTF6fMld_D76Q135TUOcxY_WT55fPdddpoz2CCiGW16uQ-2l4sKL_Lm_xfB4ng6LVjVs_negzHs_B8CIBebFWRwb944hF-o_VS5XSPoDG32-0N-1CF_nwsgCt_-OFv042NvxNtih0E9BWY&usqp=CAc"
+title="Favoritar">
+<svg class="icon-outline" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"></path></svg>
+<svg class="icon-filled" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12 21s-6.7-4.35-9.3-8.1C1 10.1 1.6 6.6 4.6 5a5.4 5.4 0 0 1 7.4 1.7A5.4 5.4 0 0 1 19.4 5c3 1.6 3.6 5.1 1.9 7.9C18.7 16.65 12 21 12 21z"></path></svg>
+</button>
+
+<img
+src="https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcTF6fMld_D76Q135TUOcxY_WT55fPdddpoz2CCiGW16uQ-2l4sKL_Lm_xfB4ng6LVjVs_negzHs_B8CIBebFWRwb944hF-o_VS5XSPoDG32-0N-1CF_nwsgCt_-OFv042NvxNtih0E9BWY&usqp=CAc"
+class="card-img-top">
+
+<div class="card-body d-flex flex-column">
+
+<h5 class="card-title">
+Samsung Galaxy Book Go
+</h5>
+
+<p class="price">
+R$ 2.789,10
+</p>
+
+<button
+class="btn btn-cart mt-auto"
+onclick="event.stopPropagation(); addToCart(this)"
+data-id="galaxy-book-go"
+data-name="Samsung Galaxy Book Go"
+data-price="2789.10"
+data-img="https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcTF6fMld_D76Q135TUOcxY_WT55fPdddpoz2CCiGW16uQ-2l4sKL_Lm_xfB4ng6LVjVs_negzHs_B8CIBebFWRwb944hF-o_VS5XSPoDG32-0N-1CF_nwsgCt_-OFv042NvxNtih0E9BWY&usqp=CAc">
+<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+<span>Adicionar ao Carrinho</span>
+</button>
+
+</div>
+</div>
+</div>
+
+<div class="col-md-6 col-lg-4">
+
+<div class="card card-clickable" onclick="abrirDetalhesProduto(event)">
+
+<button
+class="fav-btn"
+onclick="event.stopPropagation(); toggleFavorito(this)"
+data-id="smartwatch-fem"
+data-name="SmartWatch Feminino 1.83&quot;"
+data-price="122.90"
+data-img="https://encrypted-tbn2.gstatic.com/shopping?q=tbn:ANd9GcSDHl7IGNN-c6VTKessWrzqLMX72WUH75_4E2bUFeJ4hO3MxTqA41mdZUwN_GTZT2Ot0Dv4WwpmY1N2ilcf4PkqiHlMtq92T5DcrvlVoA-Kic12PH2kKSZ5bWdzwJHIVbV1d8bzwg&usqp=CAc"
+title="Favoritar">
+<svg class="icon-outline" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"></path></svg>
+<svg class="icon-filled" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12 21s-6.7-4.35-9.3-8.1C1 10.1 1.6 6.6 4.6 5a5.4 5.4 0 0 1 7.4 1.7A5.4 5.4 0 0 1 19.4 5c3 1.6 3.6 5.1 1.9 7.9C18.7 16.65 12 21 12 21z"></path></svg>
+</button>
+
+<img
+src="https://encrypted-tbn2.gstatic.com/shopping?q=tbn:ANd9GcSDHl7IGNN-c6VTKessWrzqLMX72WUH75_4E2bUFeJ4hO3MxTqA41mdZUwN_GTZT2Ot0Dv4WwpmY1N2ilcf4PkqiHlMtq92T5DcrvlVoA-Kic12PH2kKSZ5bWdzwJHIVbV1d8bzwg&usqp=CAc"
+class="card-img-top">
+
+<div class="card-body d-flex flex-column">
+
+<h5 class="card-title">
+SmartWatch Feminino 1.83"
+</h5>
+
+<p class="price">
+R$ 122,90
+</p>
+
+<button
+class="btn btn-cart mt-auto"
+onclick="event.stopPropagation(); addToCart(this)"
+data-id="smartwatch-fem"
+data-name="SmartWatch Feminino 1.83&quot;"
+data-price="122.90"
+data-img="https://encrypted-tbn2.gstatic.com/shopping?q=tbn:ANd9GcSDHl7IGNN-c6VTKessWrzqLMX72WUH75_4E2bUFeJ4hO3MxTqA41mdZUwN_GTZT2Ot0Dv4WwpmY1N2ilcf4PkqiHlMtq92T5DcrvlVoA-Kic12PH2kKSZ5bWdzwJHIVbV1d8bzwg&usqp=CAc">
+<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+<span>Adicionar ao Carrinho</span>
+</button>
+
+</div>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<section id="contato" class="py-5">
+
+<div class="container">
+
+<h2 class="section-title">
+Fale Conosco
+</h2>
+
+<div class="contact">
+
+<div class="row">
+
+<div class="col-md-6">
+<h4>LaStore</h4>
+<p>
+Estamos prontos para ajudar você a encontrar os melhores produtos de tecnologia.
+</p>
+</div>
+
+<div class="col-md-6">
+
+<form onsubmit="return enviarMensagem(event)">
+
+<input
+type="text"
+class="form-control mb-3"
+placeholder="Seu nome"
+required>
+
+<input
+type="email"
+class="form-control mb-3"
+placeholder="Seu e-mail"
+required>
+
+<textarea
+class="form-control mb-3"
+rows="4"
+placeholder="Sua mensagem"
+required></textarea>
+
+<button class="btn btn-primary w-100">
+Enviar Mensagem
+</button>
+
+</form>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+</main>
+
+<footer>
+
+<div class="container text-center">
+
+<h4>LaStore</h4>
+
+<p class="footer-text">
+Sua loja online de tecnologia.
+</p>
+
+<hr>
+
+<p class="footer-text mb-0">
+©️ 2026 LaStore - Todos os direitos reservados.
+</p>
+
+</div>
+
+</footer>
+
+<!-- MENU LATERAL (hambúrguer) -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="menuLateral">
+
+<div class="offcanvas-header">
+<div id="menuUserInfo"></div>
+<button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+</div>
+
+<div class="offcanvas-body d-flex flex-column">
+
+<a href="#home" class="menu-link" onclick="return irParaSecao(event, 'home')">Início</a>
+<a href="#produtos" class="menu-link" onclick="return irParaSecao(event, 'produtos')">Produtos</a>
+<a href="#contato" class="menu-link" onclick="return irParaSecao(event, 'contato')">Contato</a>
+
+<div id="menuAuthArea"></div>
+
+<div class="mt-auto" id="menuLogoutArea"></div>
+
+</div>
+
+</div>
+
+<!-- AUTH (Login + Cadastro em um único offcanvas, para evitar conflito de animação do Bootstrap) -->
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="authOffcanvas">
+
+<div class="offcanvas-header pb-0">
+<button
+type="button"
+class="btn-close ms-auto"
+data-bs-dismiss="offcanvas"> </button>
+</div>
+
+<div class="offcanvas-body pt-0">
+
+<!-- VIEW: LOGIN -->
+<div id="loginView">
+
+<div class="auth-header">
+<div class="auth-icon">
+<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></svg>
+</div>
+<h5>Bem-vindo de volta</h5>
+<p>Acesse sua conta para continuar</p>
+</div>
+
+<form id="loginForm" onsubmit="return handleLogin(event)" novalidate>
+
+<div class="mb-3">
+<label class="form-label">E-mail</label>
+<div class="input-group-auth">
+<span class="field-icon"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="M22 6 12 13 2 6"></path></svg></span>
+<input type="email" class="form-control" id="loginEmail" placeholder="seuemail@exemplo.com" required>
+</div>
+<div class="field-error" id="loginEmailError">Informe um e-mail válido.</div>
+</div>
+
+<div class="mb-2">
+<label class="form-label">Senha</label>
+<div class="input-group-auth">
+<span class="field-icon"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="5.5"></circle><path d="M21 2l-9.6 9.6"></path><path d="M15.5 7.5l3 3L22 7l-3-3"></path></svg></span>
+<input type="password" class="form-control" id="loginPassword" placeholder="Sua senha" required>
+<button type="button" class="toggle-visibility" onclick="toggleVisibility('loginPassword', this)"><svg class="eye-open" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"></path><circle cx="12" cy="12" r="3"></circle></svg><svg class="eye-closed d-none" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a20.3 20.3 0 0 1 5.06-5.94M9.9 4.24A10.94 10.94 0 0 1 12 4c7 0 11 7 11 7a20.3 20.3 0 0 1-2.16 3.19M14.12 14.12a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg></button>
+</div>
+<div class="field-error" id="loginPasswordError">Informe sua senha.</div>
+</div>
+
+<div class="d-flex justify-content-between align-items-center mb-3 mt-2">
+<div class="form-check">
+<input class="form-check-input" type="checkbox" id="lembrarMe">
+<label class="form-check-label" for="lembrarMe">Lembrar-me</label>
+</div>
+<a href="#" class="forgot-link" onclick="mostrarToast('Recuperação de senha', 'Enviamos as instruções para o seu e-mail (simulação).', 'success'); return false;">Esqueceu a senha?</a>
+</div>
+
+<button type="submit" class="btn btn-primary btn-auth-submit">
+Entrar
+</button>
+
+<div class="auth-divider">novo por aqui?</div>
+
+<div class="auth-switch">
+Ainda não tem conta?
+<a href="#" onclick="mostrarAuthView('cadastro'); return false;">Criar conta grátis</a>
+</div>
+
+</form>
+
+</div>
+
+<!-- VIEW: CADASTRO -->
+<div id="cadastroView" class="d-none">
+
+<div class="auth-header">
+<div class="auth-icon">
+<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+</div>
+<h5>Criar minha conta</h5>
+<p>Leva menos de um minuto</p>
+</div>
+
+<form id="cadastroForm" onsubmit="return handleCadastro(event)" novalidate>
+
+<div class="mb-3">
+<label class="form-label">Nome completo</label>
+<div class="input-group-auth">
+<span class="field-icon"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></span>
+<input type="text" class="form-control" id="cadNome" placeholder="Seu nome" required>
+</div>
+<div class="field-error" id="cadNomeError">Informe seu nome.</div>
+</div>
+
+<div class="mb-3">
+<label class="form-label">E-mail</label>
+<div class="input-group-auth">
+<span class="field-icon"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="M22 6 12 13 2 6"></path></svg></span>
+<input type="email" class="form-control" id="cadEmail" placeholder="seuemail@exemplo.com" required>
+</div>
+<div class="field-error" id="cadEmailError">Informe um e-mail válido.</div>
+</div>
+
+<div class="mb-1">
+<label class="form-label">Senha</label>
+<div class="input-group-auth">
+<span class="field-icon"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="5.5"></circle><path d="M21 2l-9.6 9.6"></path><path d="M15.5 7.5l3 3L22 7l-3-3"></path></svg></span>
+<input type="password" class="form-control" id="cadSenha" placeholder="Crie uma senha forte" oninput="atualizarForcaSenha()" required>
+<button type="button" class="toggle-visibility" onclick="toggleVisibility('cadSenha', this)"><svg class="eye-open" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"></path><circle cx="12" cy="12" r="3"></circle></svg><svg class="eye-closed d-none" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a20.3 20.3 0 0 1 5.06-5.94M9.9 4.24A10.94 10.94 0 0 1 12 4c7 0 11 7 11 7a20.3 20.3 0 0 1-2.16 3.19M14.12 14.12a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg></button>
+</div>
+
+<div class="pwd-strength">
+<div class="pwd-strength-bars">
+<span id="bar1"></span>
+<span id="bar2"></span>
+<span id="bar3"></span>
+<span id="bar4"></span>
+</div>
+<span class="pwd-strength-label" id="pwdStrengthLabel" style="color:#94a3b8;">Digite uma senha</span>
+
+<ul class="pwd-rules">
+<li id="ruleLen"><span class="rule-icon">○</span> Mínimo de 8 caracteres</li>
+<li id="ruleUpper"><span class="rule-icon">○</span> Uma letra maiúscula</li>
+<li id="ruleLower"><span class="rule-icon">○</span> Uma letra minúscula</li>
+<li id="ruleNumber"><span class="rule-icon">○</span> Um número</li>
+<li id="ruleSpecial"><span class="rule-icon">○</span> Um caractere especial (!@#$%...)</li>
+</ul>
+</div>
+</div>
+
+<div class="mb-3 mt-3">
+<label class="form-label">Confirmar senha</label>
+<div class="input-group-auth">
+<span class="field-icon"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="5.5"></circle><path d="M21 2l-9.6 9.6"></path><path d="M15.5 7.5l3 3L22 7l-3-3"></path></svg></span>
+<input type="password" class="form-control" id="cadSenhaConfirm" placeholder="Repita a senha" oninput="validarConfirmacao()" required>
+<button type="button" class="toggle-visibility" onclick="toggleVisibility('cadSenhaConfirm', this)"><svg class="eye-open" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"></path><circle cx="12" cy="12" r="3"></circle></svg><svg class="eye-closed d-none" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a20.3 20.3 0 0 1 5.06-5.94M9.9 4.24A10.94 10.94 0 0 1 12 4c7 0 11 7 11 7a20.3 20.3 0 0 1-2.16 3.19M14.12 14.12a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg></button>
+</div>
+<div class="field-error" id="cadConfirmError">As senhas não coincidem.</div>
+</div>
+
+<div class="form-check mb-3">
+<input class="form-check-input" type="checkbox" id="aceitarTermos" required>
+<label class="form-check-label" for="aceitarTermos">
+Li e aceito os Termos de Uso e a Política de Privacidade
+</label>
+</div>
+
+<button type="submit" class="btn btn-primary btn-auth-submit" id="cadastroSubmitBtn">
+Criar conta
+</button>
+
+<div class="auth-switch">
+Já tem conta?
+<a href="#" onclick="mostrarAuthView('login'); return false;">Fazer login</a>
+</div>
+
+</form>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- CARRINHO -->
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="carrinho">
+
+<div class="offcanvas-header">
+<h5 class="fw-bold">Seu Carrinho</h5>
+<button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+</div>
+
+<div class="offcanvas-body d-flex flex-column">
+
+<div id="cartItems" style="flex:1; overflow-y:auto;"></div>
+
+<div class="cart-summary" id="cartSummary" style="display:none;">
+<div class="total-row">
+<span>Total</span>
+<span id="cartTotal">R$ 0,00</span>
+</div>
+<button class="btn btn-primary w-100" onclick="finalizarCompra()">
+Finalizar Compra
+</button>
+</div>
+
+</div>
+
+</div>
+
+<!-- FAVORITOS -->
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="favoritos">
+
+<div class="offcanvas-header">
+<h5 class="fw-bold">Meus Favoritos</h5>
+<button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+</div>
+
+<div class="offcanvas-body d-flex flex-column">
+
+<div id="favItems" style="flex:1; overflow-y:auto;"></div>
+
+</div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+
+<script src="script.js"></script>
+
+</body>
+</html>
