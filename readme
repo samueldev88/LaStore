@@ -6,7 +6,7 @@ Loja virtual de tecnologia **fictícia**, desenvolvida como projeto de portfóli
 
 ## 🔗 Demo
 
-👉 [Ver site no GitHub Pages](#) <!-- substitua pelo link depois de ativar o GitHub Pages -->
+👉 [Ver site no GitHub Pages] <-- https://samuelcxyy.github.io/LaStore/ -->
 
 ## ✨ Funcionalidades
 
@@ -41,7 +41,7 @@ lastore/
 Como é um projeto 100% front-end, basta abrir o `index.html` no navegador — não precisa de servidor ou instalação.
 
 ```bash
-git clone https://github.com/seu-usuario/lastore.git
+git clone https://samuelcxyy.github.io/LaStore/
 cd lastore
 # abra o index.html no navegador
 ```
