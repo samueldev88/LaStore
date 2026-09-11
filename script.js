@@ -144,6 +144,13 @@ const ICON_CHECK = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" 
     const cart = getCart();
     if(cart.length === 0) return;
     const total = cart.reduce((soma, i) => soma + i.price * i.qty, 0);
+
+    salvarPedido({
+      data: new Date().toISOString(),
+      itens: cart.map(i => ({ name: i.name, qty: i.qty, price: i.price })),
+      total: total
+    });
+
     alert('Pedido confirmado! Total: ' + formatarPreco(total) + '\n\n(Essa é uma loja de demonstração — nenhum pagamento real foi processado.)');
     saveCart([]);
     bootstrap.Offcanvas.getInstance(document.getElementById('carrinho'))?.hide();
@@ -495,7 +502,109 @@ const ICON_CHECK = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" 
 
   // ===== ESTADO DE LOGIN =====
   let isLoggedIn = false;
-  let usuarioAtual = { nome: '' };
+  let usuarioAtual = { nome: '', nomeCompleto: '', email: '' };
+
+  // Conta cadastrada, salva no localStorage (mesmo padrão do carrinho/favoritos).
+  // Site de demonstração: guarda só a última conta criada, sem senha real.
+  const USER_KEY = 'lastore_usuario';
+
+  function salvarUsuarioCadastrado(nomeCompleto, email){
+    localStorage.setItem(USER_KEY, JSON.stringify({ nomeCompleto, email }));
+  }
+
+  function getUsuarioCadastrado(){
+    try{
+      return JSON.parse(localStorage.getItem(USER_KEY));
+    }catch(e){
+      return null;
+    }
+  }
+
+  // Histórico de pedidos, salvo a cada compra finalizada
+  const ORDERS_KEY = 'lastore_pedidos';
+
+  function getPedidos(){
+    try{
+      return JSON.parse(localStorage.getItem(ORDERS_KEY)) || [];
+    }catch(e){
+      return [];
+    }
+  }
+
+  function salvarPedido(pedido){
+    const pedidos = getPedidos();
+    pedidos.unshift(pedido); // mais recente primeiro
+    localStorage.setItem(ORDERS_KEY, JSON.stringify(pedidos));
+  }
+
+  function formatarDataPedido(iso){
+    const d = new Date(iso);
+    const data = d.toLocaleDateString('pt-BR', { day:'2-digit', month:'2-digit', year:'numeric' });
+    const hora = d.toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' });
+    return `${data} às ${hora}`;
+  }
+
+  // ===== ABA "MINHA CONTA" =====
+  function abrirMinhaConta(){
+    renderMinhaConta();
+    fecharMenu();
+    bootstrap.Offcanvas.getOrCreateInstance(document.getElementById('minhaConta')).show();
+  }
+
+  function renderMinhaConta(){
+    const el = document.getElementById('minhaContaBody');
+    const pedidos = getPedidos();
+    const nomeCompleto = usuarioAtual.nomeCompleto || usuarioAtual.nome;
+    const iniciais = (usuarioAtual.nome || '').substring(0, 2).toUpperCase();
+
+    const pedidosHtml = pedidos.length === 0
+      ? '<div class="cart-empty">Você ainda não fez nenhuma compra.<br>Seus pedidos aparecerão aqui.</div>'
+      : pedidos.map(p => `
+          <div class="order-card">
+            <div class="order-card-header">
+              <span class="order-date">${formatarDataPedido(p.data)}</span>
+              <span class="order-total">${formatarPreco(p.total)}</span>
+            </div>
+            <div class="order-items">
+              ${p.itens.map(i => `
+                <div class="order-item-row">
+                  <span>${i.qty}x ${i.name}</span>
+                  <span>${formatarPreco(i.price * i.qty)}</span>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `).join('');
+
+    el.innerHTML = `
+      <div class="account-header">
+        <div class="avatar avatar-lg">${iniciais}</div>
+        <div>
+          <div class="account-name">${nomeCompleto}</div>
+          <div class="account-email">${usuarioAtual.email}</div>
+        </div>
+      </div>
+
+      <div class="account-section">
+        <div class="account-section-title">Dados cadastrados</div>
+        <div class="account-field">
+          <span class="account-field-label">Nome completo</span>
+          <span class="account-field-value">${nomeCompleto}</span>
+        </div>
+        <div class="account-field">
+          <span class="account-field-label">E-mail</span>
+          <span class="account-field-value">${usuarioAtual.email}</span>
+        </div>
+      </div>
+
+      <div class="account-section account-orders">
+        <div class="account-section-title">Histórico de compras</div>
+        <div class="account-orders-list">
+          ${pedidosHtml}
+        </div>
+      </div>
+    `;
+  }
 
   // ===== MENU LATERAL (hambúrguer) =====
   function abrirMenu(){
@@ -536,7 +645,7 @@ const ICON_CHECK = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" 
         </div>
       `;
       authAreaEl.innerHTML = `
-        <a href="#" class="menu-link" onclick="mostrarToast('Dados da conta', 'Em breve você poderá editar seus dados aqui.', 'success'); fecharMenu(); return false;">Dados da conta</a>
+        <a href="#" class="menu-link" onclick="abrirMinhaConta(); return false;">Dados da conta</a>
       `;
       logoutAreaEl.innerHTML = `
         <button class="btn-logout" onclick="logoutUsuario()">Sair</button>
@@ -553,7 +662,7 @@ const ICON_CHECK = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" 
 
   function logoutUsuario(){
     isLoggedIn = false;
-    usuarioAtual = { nome: '' };
+    usuarioAtual = { nome: '', nomeCompleto: '', email: '' };
     fecharMenu();
     mostrarToast('Você saiu', 'Até logo! Sua sessão foi encerrada.', 'success');
   }
@@ -591,16 +700,29 @@ const ICON_CHECK = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" 
 
     if(!valido) return false;
 
-    // Simulação de autenticação (não há backend neste demo)
-    const nomeExibido = emailInput.value.split('@')[0];
+    // Simulação de autenticação (não há backend neste demo).
+    // Se o e-mail digitado bate com a conta cadastrada, usa o nome
+    // completo real; senão, cai no comportamento simulado de antes.
+    const emailDigitado = emailInput.value.trim();
+    const cadastrado = getUsuarioCadastrado();
+
     isLoggedIn = true;
-    usuarioAtual.nome = nomeExibido;
+
+    if(cadastrado && cadastrado.email.toLowerCase() === emailDigitado.toLowerCase()){
+      usuarioAtual.nomeCompleto = cadastrado.nomeCompleto;
+      usuarioAtual.nome = cadastrado.nomeCompleto.split(' ')[0];
+    } else {
+      usuarioAtual.nomeCompleto = emailDigitado.split('@')[0];
+      usuarioAtual.nome = usuarioAtual.nomeCompleto;
+    }
+    usuarioAtual.email = emailDigitado;
+
     atualizarMenu();
 
     fecharAuth();
     e.target.reset();
 
-    mostrarToast('Login efetuado com sucesso!', `Bem-vindo(a) de volta, ${nomeExibido}.`, 'success');
+    mostrarToast('Login efetuado com sucesso!', `Bem-vindo(a) de volta, ${usuarioAtual.nome}.`, 'success');
 
     return false;
   }
@@ -655,18 +777,22 @@ const ICON_CHECK = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" 
 
     if(!valido) return false;
 
-    fecharAuth();
+    // Salva a conta (mesmo padrão do carrinho/favoritos) e manda a
+    // pessoa pra tela de login, em vez de logar automaticamente.
+    const nomeCompleto = nome.value.trim();
+    const emailCadastrado = email.value.trim();
+    salvarUsuarioCadastrado(nomeCompleto, emailCadastrado);
 
-    const nomeExibido = nome.value.trim().split(' ')[0];
-    isLoggedIn = true;
-    usuarioAtual.nome = nomeExibido;
-    atualizarMenu();
-
-    mostrarToast('Conta criada com sucesso!', `Seja bem-vindo(a), ${nomeExibido}. Você já está logado.`, 'success');
+    const primeiroNome = nomeCompleto.split(' ')[0];
 
     e.target.reset();
-    // reseta indicador de força visual
     atualizarForcaSenha();
+
+    mostrarAuthView('login');
+    const loginEmailInput = document.getElementById('loginEmail');
+    if(loginEmailInput) loginEmailInput.value = emailCadastrado;
+
+    mostrarToast('Conta criada com sucesso!', `Bem-vindo(a), ${primeiroNome}. Agora faça login pra continuar.`, 'success');
 
     return false;
   }

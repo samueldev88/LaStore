@@ -34,10 +34,17 @@ body{
 }
 
 .navbar-brand{
-    color:#ffffff !important;
+    color:#f1f5f9 !important;
     font-weight:800;
     font-size:1.4rem;
     letter-spacing:-.02em;
+}
+
+.navbar-brand .brand-accent{
+    background:linear-gradient(135deg, #60a5fa, var(--accent));
+    -webkit-background-clip:text;
+    background-clip:text;
+    -webkit-text-fill-color:transparent;
 }
 
 /* Ícones da navbar (busca, curtidos, carrinho, menu) */
@@ -330,12 +337,152 @@ body{
     box-shadow:0 10px 30px rgba(0,0,0,.08);
 }
 
+.contact h4{
+    font-size:.95rem;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:.06em;
+    color:var(--primary);
+    margin-bottom:12px;
+}
+
+.contact .col-md-6 > p{
+    margin-bottom:0;
+    line-height:1.6;
+}
+
+/* Seção "Fale Conosco" em azul escuro */
+#contato{
+    background:var(--secondary);
+}
+
+#contato .section-title{
+    color:#ffffff;
+}
+
+#contato .contact{
+    background:var(--primary);
+    border:1px solid rgba(255,255,255,.08);
+    box-shadow:0 20px 45px rgba(0,0,0,.35);
+}
+
+#contato .contact h4,
+#contato .support-title{
+    color:#93c5fd;
+}
+
+#contato .contact .col-md-6 > p{
+    color:rgba(255,255,255,.65);
+}
+
+#contato .form-control{
+    background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.15);
+    color:#ffffff;
+}
+
+#contato .form-control::placeholder{
+    color:rgba(255,255,255,.4);
+}
+
+#contato .form-control:focus{
+    background:rgba(255,255,255,.1);
+    border-color:var(--accent);
+    color:#ffffff;
+    box-shadow:0 0 0 3px rgba(37,99,235,.3);
+}
+
+#contato .social-link{
+    background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.15);
+    color:#ffffff;
+}
+
+#contato .social-link:hover{
+    background:rgba(255,255,255,.1);
+}
+
+#contato .social-link.whatsapp:hover{
+    border-color:#25d366;
+    color:#25d366;
+}
+
+#contato .social-link.instagram:hover{
+    border-color:#dd2a7b;
+    color:#dd2a7b;
+}
+
+/* Redes sociais (WhatsApp / Instagram) */
+.contact-socials{
+    display:flex;
+    flex-wrap:wrap;
+    gap:12px;
+    margin-top:26px;
+}
+
+.social-link{
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    background:#ffffff;
+    border:1px solid var(--border);
+    color:var(--primary);
+    text-decoration:none;
+    font-weight:600;
+    font-size:.88rem;
+    padding:8px 18px 8px 8px;
+    border-radius:999px;
+    transition:.2s ease;
+}
+
+.social-link .social-icon{
+    width:34px;
+    height:34px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+    color:#ffffff;
+}
+
+.social-link.whatsapp .social-icon{
+    background:#25d366;
+}
+
+.social-link.instagram .social-icon{
+    background:linear-gradient(135deg,#f58529,#dd2a7b 45%,#8134af 75%,#515bd4);
+}
+
+.social-link:hover{
+    transform:translateY(-2px);
+    box-shadow:0 10px 22px rgba(15,23,42,.1);
+}
+
+.social-link.whatsapp:hover{
+    border-color:#25d366;
+    color:#25d366;
+}
+
+.social-link.instagram:hover{
+    border-color:#dd2a7b;
+    color:#dd2a7b;
+}
+
+.support-title{
+    font-size:.95rem;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:.06em;
+    color:var(--primary);
+    margin-bottom:16px;
+}
+
 /* FOOTER */
 footer{
     background:var(--primary);
     color:white;
     padding:50px 0;
-    margin-top:80px;
 }
 
 .footer-text{
@@ -438,6 +585,150 @@ footer{
     font-weight:800;
     color:var(--primary);
     margin-bottom:16px;
+}
+
+/* ===== MINHA CONTA ===== */
+.account-header{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    padding-bottom:22px;
+    margin-bottom:24px;
+    border-bottom:1px solid var(--border);
+}
+
+.account-header .avatar-lg{
+    width:56px;
+    height:56px;
+    border-radius:50%;
+    background:linear-gradient(135deg, #60a5fa, var(--accent));
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:800;
+    font-size:1.15rem;
+    flex-shrink:0;
+    box-shadow:0 8px 18px rgba(37,99,235,.28);
+}
+
+.account-name{
+    font-weight:800;
+    font-size:1.05rem;
+    color:var(--primary);
+    line-height:1.3;
+}
+
+.account-email{
+    font-size:.85rem;
+    color:var(--text);
+}
+
+.account-section{
+    margin-bottom:28px;
+}
+
+.account-section-title{
+    font-size:.78rem;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:.07em;
+    color:var(--accent);
+    margin-bottom:12px;
+}
+
+.account-field{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+    padding:12px 0;
+    border-bottom:1px solid var(--border);
+    font-size:.9rem;
+}
+
+.account-field:last-child{
+    border-bottom:none;
+}
+
+.account-field-label{
+    color:var(--text);
+}
+
+.account-field-value{
+    font-weight:700;
+    color:var(--primary);
+    text-align:right;
+    word-break:break-word;
+}
+
+.account-orders{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    min-height:0;
+    margin-bottom:0;
+}
+
+.account-orders-list{
+    flex:1;
+    overflow-y:auto;
+    padding-right:2px;
+}
+
+.order-card{
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:14px 16px;
+    margin-bottom:12px;
+    transition:.2s;
+}
+
+.order-card:hover{
+    border-color:var(--accent);
+    box-shadow:0 6px 16px rgba(15,23,42,.06);
+}
+
+.order-card:last-child{
+    margin-bottom:0;
+}
+
+.order-card-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:10px;
+    padding-bottom:10px;
+    border-bottom:1px dashed var(--border);
+}
+
+.order-date{
+    font-size:.78rem;
+    color:var(--text);
+}
+
+.order-total{
+    font-weight:800;
+    color:var(--primary);
+    font-size:.95rem;
+}
+
+.order-items{
+    display:flex;
+    flex-direction:column;
+    gap:7px;
+}
+
+.order-item-row{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+    font-size:.83rem;
+    color:var(--text);
+}
+
+.order-item-row span:first-child{
+    flex:1;
 }
 
 /* ===== MENU LATERAL (hambúrguer) ===== */
@@ -743,12 +1034,68 @@ footer{
 
 @media(max-width:768px){
 
+.hero{
+    min-height:auto;
+    padding:110px 20px 56px;
+}
+
 .hero h1{
-    font-size:2.5rem;
+    font-size:2.1rem;
+    margin-bottom:14px;
+}
+
+.hero p{
+    font-size:1rem;
+}
+
+.hero .btn{
+    margin-top:22px;
+    padding:12px 26px;
 }
 
 .section-title{
-    font-size:2rem;
+    font-size:1.8rem;
+    margin-bottom:32px;
+}
+
+/* CARDS DE PRODUTO — tamanhos fixos de desktop quebravam no mobile */
+.card-img-top{
+    height:150px;
+    padding:14px;
+}
+
+.card-title{
+    min-height:auto;
+    font-size:.85rem;
+    line-height:1.35;
+    margin-bottom:6px;
+    display:-webkit-box;
+    -webkit-line-clamp:2;
+    -webkit-box-orient:vertical;
+    overflow:hidden;
+}
+
+.price{
+    font-size:1.15rem;
+    margin-bottom:10px;
+}
+
+.btn-cart{
+    padding:10px;
+    font-size:.78rem;
+}
+
+.btn-cart span{
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+.fav-btn{
+    width:32px;
+    height:32px;
+    top:10px;
+    right:10px;
 }
 
 .toast-stack{
@@ -760,6 +1107,48 @@ footer{
     min-width:0;
     max-width:none;
     width:100%;
+}
+
+#produtos.py-5,
+#contato.py-5{
+    padding-top:2.5rem !important;
+    padding-bottom:2.5rem !important;
+}
+
+#produtos .row.g-4{
+    --bs-gutter-x:0.75rem;
+    --bs-gutter-y:0.9rem;
+}
+
+.contact{
+    padding:24px 18px;
+}
+
+.contact-socials{
+    flex-direction:column;
+}
+
+.social-link{
+    width:100%;
+    justify-content:center;
+    padding:10px 18px 10px 10px;
+}
+
+}
+
+@media(max-width:400px){
+
+.card-img-top{
+    height:120px;
+    padding:10px;
+}
+
+.price{
+    font-size:1rem;
+}
+
+.hero h1{
+    font-size:1.75rem;
 }
 
 }
