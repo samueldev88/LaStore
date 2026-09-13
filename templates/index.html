@@ -1,0 +1,1384 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>LaStore | Tecnologia e Inovação</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+<style>
+/* ===== SELETOR DE CATEGORIA (estilo "barra de busca") e SELETOR DE
+   IDIOMA =====
+   Sugestão: mova este bloco para style.css quando possível. Usa a
+   variável de marca --primary (já definida no seu style.css, vista em
+   script.js) com fallback para o azul padrão do Bootstrap, então herda
+   a cor de marca automaticamente em vez de duplicar valores aqui. */
+
+.category-search{
+  position: relative;
+  max-width: 460px;
+  margin: 0 auto 2.75rem;
+}
+
+.category-search-trigger{
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: .7rem;
+  padding: .85rem 1.15rem;
+  background: var(--bs-body-bg, #fff);
+  border: 1.5px solid rgba(0,0,0,.1);
+  border-radius: 999px;
+  box-shadow: 0 1px 2px rgba(0,0,0,.04);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color .18s ease, box-shadow .18s ease;
+}
+
+.category-search-trigger:hover{
+  border-color: rgba(0,0,0,.18);
+}
+
+.category-search.open .category-search-trigger,
+.category-search-trigger:focus-visible{
+  border-color: var(--primary, var(--bs-primary, #0d6efd));
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary, var(--bs-primary, #0d6efd)) 15%, transparent);
+  outline: none;
+}
+
+.category-search-icon{
+  flex-shrink: 0;
+  color: rgba(0,0,0,.4);
+}
+
+.category-search-label{
+  flex: 1;
+  font-size: .96rem;
+  color: rgba(0,0,0,.55);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.category-search.has-value .category-search-label{
+  color: inherit;
+  font-weight: 500;
+}
+
+.category-search-chevron{
+  flex-shrink: 0;
+  color: rgba(0,0,0,.4);
+  transition: transform .18s ease;
+}
+
+.category-search.open .category-search-chevron{
+  transform: rotate(180deg);
+}
+
+.category-search-menu{
+  position: absolute;
+  top: calc(100% + .5rem);
+  left: 0;
+  right: 0;
+  z-index: 50;
+  margin: 0;
+  padding: .4rem;
+  list-style: none;
+  background: var(--bs-body-bg, #fff);
+  border-radius: 16px;
+  box-shadow: 0 16px 40px rgba(0,0,0,.14), 0 2px 8px rgba(0,0,0,.06);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-6px);
+  transition: opacity .16s ease, transform .16s ease, visibility .16s ease;
+}
+
+.category-search.open .category-search-menu{
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.category-option{
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: .7rem;
+  padding: .6rem .7rem;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  font-size: .93rem;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color .12s ease;
+}
+
+.category-option:hover,
+.category-option:focus-visible{
+  background: color-mix(in srgb, var(--primary, var(--bs-primary, #0d6efd)) 8%, transparent);
+  outline: none;
+}
+
+.category-option.active{
+  color: var(--primary, var(--bs-primary, #0d6efd));
+  font-weight: 600;
+}
+
+.category-option-icon{
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9px;
+  background: rgba(0,0,0,.05);
+  color: rgba(0,0,0,.55);
+  transition: background-color .12s ease, color .12s ease;
+}
+
+.category-option.active .category-option-icon{
+  background: color-mix(in srgb, var(--primary, var(--bs-primary, #0d6efd)) 14%, transparent);
+  color: var(--primary, var(--bs-primary, #0d6efd));
+}
+
+.category-option-check{
+  margin-left: auto;
+  flex-shrink: 0;
+  opacity: 0;
+}
+
+.category-option.active .category-option-check{
+  opacity: 1;
+}
+
+/* ===== SELETOR DE IDIOMA (compacto, no cabeçalho do menu hambúrguer) =====
+   Fica ao lado de "Minha conta" / "Menu", mostrando só bandeira + código
+   (BR/EN/ES) e abrindo um dropdown pequeno ao ser clicado. */
+
+.offcanvas-header-left{
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  min-width: 0;
+  flex: 1;
+}
+
+.offcanvas-header-left #menuUserInfo{
+  min-width: 0;
+  overflow: hidden;
+}
+
+.offcanvas-header-left #menuUserInfo .menu-user-info{
+  min-width: 0;
+}
+
+.menu-lang{
+  position: relative;
+  flex-shrink: 0;
+}
+
+.menu-lang-trigger{
+  display: flex;
+  align-items: center;
+  gap: .3rem;
+  padding: .3rem .55rem;
+  background: rgba(0,0,0,.04);
+  border: 1px solid rgba(0,0,0,.09);
+  border-radius: 999px;
+  cursor: pointer;
+  color: inherit;
+  font-size: .74rem;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+  transition: background-color .12s ease, border-color .12s ease;
+}
+
+.menu-lang-trigger:hover,
+.menu-lang-trigger:focus-visible{
+  background: color-mix(in srgb, var(--primary, var(--bs-primary, #0d6efd)) 10%, transparent);
+  border-color: color-mix(in srgb, var(--primary, var(--bs-primary, #0d6efd)) 35%, transparent);
+  outline: none;
+}
+
+.menu-lang-trigger .menu-lang-flag{
+  font-size: .95rem;
+  line-height: 1;
+}
+
+.menu-lang-code{
+  text-transform: uppercase;
+  letter-spacing: .02em;
+}
+
+.menu-lang-sr{
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.menu-lang-chevron{
+  flex-shrink: 0;
+  width: 10px;
+  height: 10px;
+  color: rgba(0,0,0,.4);
+  transition: transform .18s ease;
+}
+
+.menu-lang.open .menu-lang-chevron{
+  transform: rotate(180deg);
+}
+
+.menu-lang-menu{
+  position: absolute;
+  top: calc(100% + .45rem);
+  right: 0;
+  z-index: 1060;
+  margin: 0;
+  padding: .35rem;
+  list-style: none;
+  min-width: 152px;
+  background: var(--bs-body-bg, #fff);
+  border-radius: 14px;
+  box-shadow: 0 16px 40px rgba(0,0,0,.16), 0 2px 8px rgba(0,0,0,.08);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-6px);
+  transition: opacity .16s ease, transform .16s ease, visibility .16s ease;
+}
+
+.menu-lang.open .menu-lang-menu{
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.menu-lang-option{
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  padding: .5rem .6rem;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  font-size: .88rem;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color .12s ease;
+}
+
+.menu-lang-option:hover,
+.menu-lang-option:focus-visible{
+  background: color-mix(in srgb, var(--primary, var(--bs-primary, #0d6efd)) 8%, transparent);
+  outline: none;
+}
+
+.menu-lang-option.active{
+  color: var(--primary, var(--bs-primary, #0d6efd));
+  font-weight: 600;
+}
+
+.menu-lang-option .menu-lang-flag{
+  font-size: 1.05rem;
+  line-height: 1;
+}
+
+.menu-lang-check{
+  margin-left: auto;
+  flex-shrink: 0;
+  opacity: 0;
+}
+
+.menu-lang-option.active .menu-lang-check{
+  opacity: 1;
+}
+
+/* ===== FAQ DE SUPORTE (substitui o antigo formulário de mensagem) =====
+   Sem painel próprio: herda o mesmo fundo azul-marinho do card
+   "Fale Conosco" (definido em #contato .contact no style.css). Os itens
+   do acordeão usam --secondary (um tom um pouco mais claro que o fundo)
+   pra se destacarem como cartões, sem nenhum branco por dentro.
+   A cor do título "Suporte" NÃO é definida aqui — o próprio style.css já
+   tem a regra "#contato .contact h4, #contato .support-title { color:
+   #93c5fd; }", que iguala Suporte e Fale Conosco automaticamente.
+
+   "Central de Atendimento" (o h2 da seção) usa por padrão branco puro no
+   style.css ("#contato .section-title{ color:#ffffff; }"). A regra abaixo
+   sobrescreve isso para usar o mesmo azul-claro de "Fale Conosco"/
+   "Suporte" — como esta tag <style> é carregada depois do style.css no
+   <head>, ela vence sem precisar de !important. */
+
+#contato .section-title{
+  color: #93c5fd;
+}
+
+.support-panel{
+  background: transparent;
+  box-shadow: none;
+  border-radius: 0;
+  padding: 0;
+}
+
+.support-panel .support-intro{
+  color: rgba(255,255,255,.82);
+}
+
+.support-intro{
+  color: rgba(0,0,0,.6);
+  font-size: .93rem;
+  margin-bottom: 1.1rem;
+}
+
+.support-accordion .accordion-item{
+  border: none;
+  border-radius: 12px !important;
+  overflow: hidden;
+  margin-bottom: .6rem;
+  background: var(--secondary, #1e293b);
+  box-shadow: 0 4px 14px rgba(0,0,0,.25);
+}
+
+.support-accordion .accordion-item:last-child{
+  margin-bottom: 0;
+}
+
+.support-accordion .accordion-button{
+  font-size: .93rem;
+  font-weight: 600;
+  padding: .85rem 1rem;
+  background:
+    linear-gradient(rgba(255,255,255,.04), rgba(255,255,255,.04)),
+    var(--secondary, #1e293b) !important;
+  color: #fff !important;
+  box-shadow: none !important;
+  transition: background-color .12s ease;
+}
+
+.support-accordion .accordion-button:hover{
+  background:
+    linear-gradient(rgba(255,255,255,.1), rgba(255,255,255,.1)),
+    var(--secondary, #1e293b) !important;
+}
+
+.support-accordion .accordion-button:not(.collapsed){
+  color: #fff !important;
+  background:
+    linear-gradient(rgba(255,255,255,.1), rgba(255,255,255,.1)),
+    var(--secondary, #1e293b) !important;
+  box-shadow: none !important;
+}
+
+.support-accordion .accordion-button:focus{
+  box-shadow: 0 0 0 3px rgba(255,255,255,.3) !important;
+}
+
+.support-accordion .accordion-button::after{
+  width: 1rem;
+  height: 1rem;
+  background-size: 1rem;
+  filter: brightness(0) invert(1);
+}
+
+.support-accordion .accordion-body{
+  font-size: .89rem;
+  line-height: 1.55;
+  color: rgba(255,255,255,.72) !important;
+  padding: 0 1rem 1rem;
+  background: var(--secondary, #1e293b) !important;
+}
+
+/* ===== OFERTAS DO DIA (carrossel horizontal, arrasta pro lado) ===== */
+
+.offers-header{
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.1rem;
+}
+
+.offers-subtitle{
+  color: var(--text, rgba(0,0,0,.6));
+  font-size: .93rem;
+  margin-bottom: 0;
+}
+
+.offers-title{
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+}
+
+.offers-fire{
+  display: inline-block;
+  font-size: 1.05em;
+  line-height: 1;
+  animation: offers-fire-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes offers-fire-pulse{
+  0%, 100%{ transform: scale(1); }
+  50%{ transform: scale(1.15); }
+}
+
+.offers-nav{
+  display: flex;
+  gap: .5rem;
+  flex-shrink: 0;
+}
+
+.offers-nav-btn{
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid rgba(0,0,0,.1);
+  background: #fff;
+  color: var(--primary, #0f172a);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color .12s ease, transform .1s ease;
+}
+
+.offers-nav-btn:hover{
+  background: rgba(0,0,0,.05);
+}
+
+.offers-nav-btn:active{
+  transform: scale(.92);
+}
+
+.offers-carousel{
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  scroll-behavior: smooth;
+  padding: .3rem .15rem 1rem;
+  margin: 0 -.15rem;
+  cursor: grab;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.offers-carousel::-webkit-scrollbar{
+  display: none;
+}
+
+.offers-carousel.dragging{
+  cursor: grabbing;
+  scroll-snap-type: none;
+  scroll-behavior: auto;
+}
+
+.offer-card{
+  position: relative;
+  flex: 0 0 auto;
+  width: 190px;
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--bs-body-bg, #fff);
+  box-shadow: 0 6px 18px rgba(0,0,0,.1);
+  scroll-snap-align: start;
+  user-select: none;
+  cursor: pointer;
+}
+
+.offer-card img{
+  width: 100%;
+  height: 130px;
+  object-fit: cover;
+  display: block;
+  pointer-events: none;
+}
+
+.offer-badge{
+  position: absolute;
+  top: .6rem;
+  left: .6rem;
+  z-index: 2;
+  background: var(--danger, #ef4444);
+  color: #fff;
+  font-size: .65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .03em;
+  padding: .28rem .55rem;
+  border-radius: 999px;
+}
+
+.offer-card .fav-btn{
+  position: absolute;
+  top: .5rem;
+  right: .5rem;
+  z-index: 2;
+}
+
+.offer-card-body{
+  padding: .8rem .85rem .9rem;
+}
+
+.offer-card-title{
+  font-size: .85rem;
+  font-weight: 600;
+  margin: 0 0 .3rem;
+  color: var(--primary, #0f172a);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 2.3em;
+}
+
+.offer-card-price{
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: .4rem;
+  margin: 0 0 .65rem;
+}
+
+.offer-price-old{
+  text-decoration: line-through;
+  color: rgba(0,0,0,.4);
+  font-weight: 500;
+  font-size: .76rem;
+}
+
+.offer-price-new{
+  font-weight: 700;
+  color: var(--danger, #ef4444);
+  font-size: .95rem;
+}
+
+.btn-cart-offer{
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .4rem;
+  font-size: .78rem;
+  padding: .45rem .5rem;
+  border-radius: 10px;
+  border: none;
+  background: var(--primary, #0f172a);
+  color: #fff;
+  cursor: pointer;
+  transition: background-color .12s ease;
+}
+
+.btn-cart-offer:hover{
+  background: var(--secondary, #1e293b);
+}
+
+@media (max-width: 576px){
+  .offers-nav{
+    display: none;
+  }
+  .offer-card{
+    width: 46vw;
+  }
+}
+
+/* ===== PREÇO COM OFERTA NA GRADE "PRODUTOS EM DESTAQUE" =====
+   Aplicado via JS (aplicarPrecosOferta) nos produtos que também estão no
+   carrossel de Ofertas do Dia, pra manter o mesmo preço nos dois lugares. */
+
+.price.price-has-offer{
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: .5rem;
+}
+
+.price-old{
+  font-size: .85rem;
+  font-weight: 600;
+  color: rgba(0,0,0,.35);
+  text-decoration: line-through;
+}
+
+.price-new{
+  color: var(--danger, #ef4444);
+  font-weight: 800;
+  font-size: 1.3rem;
+}
+
+.product-offer-tag{
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 2;
+  background: var(--danger, #ef4444);
+  color: #fff;
+  font-size: .68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .03em;
+  padding: .3rem .6rem;
+  border-radius: 999px;
+}
+
+@media (prefers-reduced-motion: reduce){
+  .category-search-trigger,
+  .category-search-chevron,
+  .category-search-menu,
+  .category-option,
+  .category-option-icon,
+  .menu-lang-trigger,
+  .menu-lang-chevron,
+  .menu-lang-menu,
+  .menu-lang-option,
+  .offers-carousel,
+  .offers-fire{
+    transition: none;
+    scroll-behavior: auto;
+    animation: none;
+  }
+}
+</style>
+
+</head>
+
+<body>
+
+<!-- TOASTS -->
+<div class="toast-stack" id="toastStack"></div>
+
+<header>
+
+<nav class="navbar navbar-expand-lg fixed-top">
+<div class="container d-flex align-items-center justify-content-between">
+
+<a class="navbar-brand" href="#">
+La<span class="brand-accent">Store</span>
+</a>
+
+<div class="nav-icons">
+
+<button class="icon-btn" id="searchToggleBtn" onclick="toggleSearch()" aria-label="Pesquisar" title="Pesquisar">
+<svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+</button>
+
+<button class="icon-btn" id="wishlistBtn" data-bs-toggle="offcanvas" data-bs-target="#favoritos" aria-label="Favoritos" title="Favoritos">
+<svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"></path></svg>
+<span class="cart-badge d-none" id="favCount">0</span>
+</button>
+
+<button class="icon-btn" data-bs-toggle="offcanvas" data-bs-target="#carrinho" aria-label="Carrinho" title="Carrinho">
+<svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h12l1 12H5L6 8z"></path><path d="M9 8V6a3 3 0 0 1 6 0v2"></path></svg>
+<span class="cart-badge d-none" id="cartCount">0</span>
+</button>
+
+<button class="icon-btn" id="menuToggleBtn" onclick="abrirMenu()" aria-label="Menu" title="Menu">
+<svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+</button>
+
+</div>
+
+</div>
+
+<!-- BARRA DE BUSCA -->
+<div class="search-bar-wrap" id="searchBarWrap">
+<div class="container">
+<div class="search-input-group">
+<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+<input type="text" id="searchInput" class="form-control" data-i18n-placeholder="search_placeholder" placeholder="Buscar produtos..." oninput="handleSearchInput()" autocomplete="off">
+</div>
+<div class="search-suggestions" id="searchSuggestions"></div>
+</div>
+</div>
+
+</nav>
+
+</header>
+
+<main>
+
+<section id="home" class="hero">
+
+<div class="container">
+
+<h1 data-i18n="hero_title">Tecnologia para o seu dia a dia</h1>
+
+<p data-i18n="hero_subtitle">
+Os melhores smartphones, notebooks e acessórios com preços competitivos e entrega rápida para todo o Brasil.
+</p>
+
+<a href="#produtos" class="btn btn-primary" data-i18n="hero_cta">
+Ver Produtos
+</a>
+
+</div>
+
+</section>
+
+<section id="ofertas" class="py-5 offers-section"{% if not ofertas %} style="display:none;"{% endif %}>
+
+<div class="container">
+
+<div class="offers-header">
+
+<div>
+<h2 class="section-title mb-1 offers-title">
+<span data-i18n="offers_title">Ofertas do Dia</span>
+<span class="offers-fire" aria-hidden="true">🔥</span>
+</h2>
+<p class="offers-subtitle" data-i18n="offers_subtitle">Arraste para o lado e confira os destaques de hoje.</p>
+</div>
+
+<div class="offers-nav">
+<button type="button" class="offers-nav-btn" aria-label="Anterior" onclick="scrollOfertas(-1)">
+<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+</button>
+<button type="button" class="offers-nav-btn" aria-label="Próximo" onclick="scrollOfertas(1)">
+<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+</button>
+</div>
+
+</div>
+
+<div class="offers-carousel" id="offersCarousel">
+
+{% for produto in ofertas %}
+<div class="offer-card" onclick="abrirDetalhesProduto(event)">
+
+<span class="offer-badge" data-i18n="offer_badge">Oferta do dia</span>
+
+<button
+class="fav-btn"
+onclick="event.stopPropagation(); toggleFavorito(this)"
+data-id="{{ produto.id }}"
+data-name="{{ produto.nome }}"
+data-price="{{ produto.preco_com_desconto }}"
+data-img="{{ produto.imagem_url }}"
+title="Favoritar">
+<svg class="icon-outline" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"></path></svg>
+<svg class="icon-filled" viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 21s-6.7-4.35-9.3-8.1C1 10.1 1.6 6.6 4.6 5a5.4 5.4 0 0 1 7.4 1.7A5.4 5.4 0 0 1 19.4 5c3 1.6 3.6 5.1 1.9 7.9C18.7 16.65 12 21 12 21z"></path></svg>
+</button>
+
+<img src="{{ produto.imagem_url }}" alt="{{ produto.nome }}" draggable="false">
+
+<div class="offer-card-body">
+<h3 class="offer-card-title">{{ produto.nome }}</h3>
+<p class="offer-card-price">
+<span class="offer-price-old" data-price-old="{{ produto.preco }}">{{ produto.preco_fmt }}</span>
+<span class="offer-price-new">{{ produto.preco_oferta_fmt }}</span>
+</p>
+
+<button
+class="btn btn-cart-offer w-100"
+onclick="event.stopPropagation(); addToCart(this)"
+data-id="{{ produto.id }}"
+data-name="{{ produto.nome }}"
+data-price="{{ produto.preco_com_desconto }}"
+data-img="{{ produto.imagem_url }}">
+<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+<span data-i18n="add_to_cart">Adicionar ao Carrinho</span>
+</button>
+
+</div>
+</div>
+{% endfor %}
+
+</div>
+
+</div>
+
+</section>
+
+<section id="produtos" class="py-5">
+
+<div class="container">
+
+<h2 class="section-title" data-i18n="products_title">
+Produtos em Destaque
+</h2>
+
+<!-- SELETOR DE CATEGORIA -->
+<div class="category-search" id="categorySearch">
+
+<button
+type="button"
+class="category-search-trigger"
+id="categorySearchTrigger"
+aria-haspopup="listbox"
+aria-expanded="false"
+aria-controls="categorySearchMenu"
+onclick="toggleCategoryMenu()">
+<svg class="category-search-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+<span class="category-search-label" id="categorySearchLabel">Qual produto procura?</span>
+<svg class="category-search-chevron" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+</button>
+
+<ul class="category-search-menu" id="categorySearchMenu" role="listbox">
+
+<li role="option" aria-selected="true">
+<button type="button" class="category-option active" data-categoria="" onclick="selecionarCategoria('', 'cat_placeholder', this)">
+<span class="category-option-icon"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5"></rect><rect x="3" y="14" width="7" height="7" rx="1.5"></rect><rect x="14" y="14" width="7" height="7" rx="1.5"></rect></svg></span>
+<span data-i18n="cat_all">Todos os produtos</span>
+<svg class="category-option-check" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+</button>
+</li>
+
+<li role="option" aria-selected="false">
+<button type="button" class="category-option" data-categoria="notebook" onclick="selecionarCategoria('notebook', 'cat_notebook', this)">
+<span class="category-option-icon"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="1.5"></rect><line x1="2" y1="20" x2="22" y2="20"></line></svg></span>
+<span data-i18n="cat_notebook">Notebook</span>
+<svg class="category-option-check" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+</button>
+</li>
+
+<li role="option" aria-selected="false">
+<button type="button" class="category-option" data-categoria="celular" onclick="selecionarCategoria('celular', 'cat_celular', this)">
+<span class="category-option-icon"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="2.5"></rect><line x1="10" y1="18.5" x2="14" y2="18.5"></line></svg></span>
+<span data-i18n="cat_celular">Celular</span>
+<svg class="category-option-check" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+</button>
+</li>
+
+<li role="option" aria-selected="false">
+<button type="button" class="category-option" data-categoria="fone" onclick="selecionarCategoria('fone', 'cat_fone', this)">
+<span class="category-option-icon"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 14v-2a9 9 0 0 1 18 0v2"></path><rect x="2.5" y="14" width="5" height="7" rx="1.8"></rect><rect x="16.5" y="14" width="5" height="7" rx="1.8"></rect></svg></span>
+<span data-i18n="cat_fone">Fone</span>
+<svg class="category-option-check" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+</button>
+</li>
+
+<li role="option" aria-selected="false">
+<button type="button" class="category-option" data-categoria="smartwatch" onclick="selecionarCategoria('smartwatch', 'cat_smartwatch', this)">
+<span class="category-option-icon"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="7" width="10" height="10" rx="2"></rect><path d="M9 7V4h6v3"></path><path d="M9 17v3h6v-3"></path></svg></span>
+<span data-i18n="cat_smartwatch">SmartWatch</span>
+<svg class="category-option-check" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+</button>
+</li>
+
+</ul>
+
+</div>
+
+<div class="row g-4" id="produtosGrid">
+
+{% for produto in produtos %}
+<div class="col-6 col-lg-4">
+
+<div class="card card-clickable" onclick="abrirDetalhesProduto(event)">
+
+<button
+class="fav-btn"
+onclick="event.stopPropagation(); toggleFavorito(this)"
+data-id="{{ produto.id }}"
+data-name="{{ produto.nome }}"
+data-price="{{ produto.preco }}"
+data-img="{{ produto.imagem_url }}"
+title="Favoritar">
+<svg class="icon-outline" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"></path></svg>
+<svg class="icon-filled" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12 21s-6.7-4.35-9.3-8.1C1 10.1 1.6 6.6 4.6 5a5.4 5.4 0 0 1 7.4 1.7A5.4 5.4 0 0 1 19.4 5c3 1.6 3.6 5.1 1.9 7.9C18.7 16.65 12 21 12 21z"></path></svg>
+</button>
+
+<img
+src="{{ produto.imagem_url }}"
+class="card-img-top">
+
+<div class="card-body d-flex flex-column">
+
+<h5 class="card-title">
+{{ produto.nome }}
+</h5>
+
+<p class="price">
+{{ produto.preco_fmt }}
+</p>
+
+<button
+class="btn btn-cart mt-auto"
+onclick="event.stopPropagation(); addToCart(this)"
+data-id="{{ produto.id }}"
+data-name="{{ produto.nome }}"
+data-price="{{ produto.preco }}"
+data-img="{{ produto.imagem_url }}">
+<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+<span data-i18n="add_to_cart">Adicionar ao Carrinho</span>
+</button>
+
+</div>
+</div>
+</div>
+{% endfor %}
+
+</div>
+
+</div>
+
+</section>
+
+<section id="contato" class="py-5">
+
+<div class="container">
+
+<h2 class="section-title" data-i18n="contact_title">
+Central de Atendimento
+</h2>
+
+<div class="contact">
+
+<div class="row">
+
+<div class="col-md-6">
+<h4 data-i18n="contact_heading">Fale Conosco</h4>
+<p data-i18n="contact_intro">
+Estamos prontos para ajudar você a encontrar os melhores produtos de tecnologia.
+</p>
+
+<div class="contact-socials">
+
+<a href="#" class="social-link whatsapp" onclick="mostrarToast('WhatsApp', 'Este é um site fictício, criado apenas para fins de demonstração/estudo. Não há WhatsApp real associado.', 'success'); return false;">
+<span class="social-icon">
+<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38a9.87 9.87 0 0 0 4.74 1.21h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2zm0 18.12h-.01a8.2 8.2 0 0 1-4.18-1.14l-.3-.18-3.11.82.83-3.03-.2-.31a8.2 8.2 0 0 1-1.26-4.37c0-4.55 3.7-8.25 8.25-8.25a8.2 8.2 0 0 1 5.83 2.42 8.19 8.19 0 0 1 2.41 5.83c0 4.55-3.7 8.21-8.26 8.21zm4.52-6.16c-.25-.12-1.47-.72-1.7-.81-.23-.08-.39-.12-.56.13-.16.25-.64.81-.78.97-.14.17-.29.19-.54.06-.25-.12-1.04-.38-1.99-1.22-.73-.66-1.23-1.46-1.37-1.71-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43.12-.15.16-.25.25-.42.08-.16.04-.31-.02-.43-.06-.13-.56-1.35-.77-1.85-.2-.48-.41-.42-.56-.43h-.48c-.16 0-.43.06-.65.31-.23.25-.85.83-.85 2.03 0 1.2.87 2.35.99 2.51.12.16 1.71 2.62 4.15 3.67.58.25 1.03.4 1.38.51.58.18 1.11.16 1.53.1.47-.07 1.47-.6 1.68-1.18.21-.58.21-1.08.14-1.18-.06-.1-.23-.16-.48-.29z"/></svg>
+</span>
+<span>(00) 00000-0000</span>
+</a>
+
+<a href="#" class="social-link instagram" onclick="mostrarToast('Instagram', 'Este é um site fictício, criado apenas para fins de demonstração/estudo. Não há Instagram real associado.', 'success'); return false;">
+<span class="social-icon">
+<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+</span>
+<span>@lastore.tech</span>
+</a>
+
+</div>
+
+</div>
+
+<div class="col-md-6">
+
+<div class="support-panel">
+
+<h4 class="support-title" data-i18n="support_title">Suporte</h4>
+
+<p class="support-intro" data-i18n="support_intro">
+Respostas rápidas para as dúvidas mais comuns. Não encontrou o que precisava? Fale com a gente pelo WhatsApp ao lado.
+</p>
+
+<div class="accordion support-accordion" id="supportAccordion">
+
+<div class="accordion-item">
+<h2 class="accordion-header" id="faqShippingHeading">
+<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqShipping" aria-expanded="false" aria-controls="faqShipping" data-i18n="faq_shipping_q">
+Qual o prazo de entrega?
+</button>
+</h2>
+<div id="faqShipping" class="accordion-collapse collapse" aria-labelledby="faqShippingHeading" data-bs-parent="#supportAccordion">
+<div class="accordion-body" data-i18n="faq_shipping_a">
+O prazo médio é de 3 a 7 dias úteis, variando conforme a sua região. Você recebe o código de rastreio assim que o pedido é despachado.
+</div>
+</div>
+</div>
+
+<div class="accordion-item">
+<h2 class="accordion-header" id="faqReturnsHeading">
+<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqReturns" aria-expanded="false" aria-controls="faqReturns" data-i18n="faq_returns_q">
+Como funciona a troca ou devolução?
+</button>
+</h2>
+<div id="faqReturns" class="accordion-collapse collapse" aria-labelledby="faqReturnsHeading" data-bs-parent="#supportAccordion">
+<div class="accordion-body" data-i18n="faq_returns_a">
+Você tem até 7 dias corridos após o recebimento para solicitar troca ou devolução, sem custo adicional, desde que o produto esteja na embalagem original.
+</div>
+</div>
+</div>
+
+<div class="accordion-item">
+<h2 class="accordion-header" id="faqPaymentHeading">
+<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqPayment" aria-expanded="false" aria-controls="faqPayment" data-i18n="faq_payment_q">
+Quais formas de pagamento vocês aceitam?
+</button>
+</h2>
+<div id="faqPayment" class="accordion-collapse collapse" aria-labelledby="faqPaymentHeading" data-bs-parent="#supportAccordion">
+<div class="accordion-body" data-i18n="faq_payment_a">
+Aceitamos cartão de crédito em até 12x, Pix e boleto bancário. Pix e boleto têm aprovação mais rápida.
+</div>
+</div>
+</div>
+
+<div class="accordion-item">
+<h2 class="accordion-header" id="faqWarrantyHeading">
+<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqWarranty" aria-expanded="false" aria-controls="faqWarranty" data-i18n="faq_warranty_q">
+Os produtos têm garantia?
+</button>
+</h2>
+<div id="faqWarranty" class="accordion-collapse collapse" aria-labelledby="faqWarrantyHeading" data-bs-parent="#supportAccordion">
+<div class="accordion-body" data-i18n="faq_warranty_a">
+Sim, todos os produtos têm garantia mínima de 12 meses contra defeitos de fabricação, além da garantia legal do fabricante.
+</div>
+</div>
+</div>
+
+<div class="accordion-item">
+<h2 class="accordion-header" id="faqTrackingHeading">
+<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqTracking" aria-expanded="false" aria-controls="faqTracking" data-i18n="faq_tracking_q">
+Como acompanho meu pedido?
+</button>
+</h2>
+<div id="faqTracking" class="accordion-collapse collapse" aria-labelledby="faqTrackingHeading" data-bs-parent="#supportAccordion">
+<div class="accordion-body" data-i18n="faq_tracking_a">
+Acesse "Minha Conta" e consulte o status atualizado dos seus pedidos, do processamento até a entrega.
+</div>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+</main>
+
+<footer>
+
+<div class="container text-center">
+
+<h4>LaStore</h4>
+
+<p class="footer-text" data-i18n="footer_tagline">
+Sua loja online de tecnologia.
+</p>
+
+<hr>
+
+<p class="footer-text mb-0" data-i18n="footer_copyright">
+©️ 2026 LaStore - Todos os direitos reservados.
+</p>
+
+</div>
+
+</footer>
+
+<!-- MENU LATERAL (hambúrguer) -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="menuLateral">
+
+<div class="offcanvas-header">
+
+<div class="offcanvas-header-left">
+
+<div id="menuUserInfo"></div>
+
+<!-- SELETOR DE IDIOMA (compacto: bandeira + código) -->
+<div class="menu-lang" id="menuLang">
+
+<button
+type="button"
+class="menu-lang-trigger"
+id="menuLangTrigger"
+aria-haspopup="listbox"
+aria-expanded="false"
+aria-controls="menuLangMenu"
+aria-label="Idioma"
+onclick="toggleLangMenu()">
+<span class="menu-lang-flag" id="menuLangFlag">🇧🇷</span>
+<span class="menu-lang-code" id="menuLangCode">BR</span>
+<span class="menu-lang-sr" data-i18n="lang_label">Idioma</span>
+<svg class="menu-lang-chevron" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+</button>
+
+<ul class="menu-lang-menu" id="menuLangMenu" role="listbox">
+
+<li role="option" aria-selected="true">
+<button type="button" class="menu-lang-option active" data-lang="pt-br" onclick="selecionarIdioma('pt-br', this)">
+<span class="menu-lang-flag">🇧🇷</span>
+<span>Português</span>
+<svg class="menu-lang-check" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+</button>
+</li>
+
+<li role="option" aria-selected="false">
+<button type="button" class="menu-lang-option" data-lang="en" onclick="selecionarIdioma('en', this)">
+<span class="menu-lang-flag">🇺🇸</span>
+<span>English</span>
+<svg class="menu-lang-check" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+</button>
+</li>
+
+<li role="option" aria-selected="false">
+<button type="button" class="menu-lang-option" data-lang="es" onclick="selecionarIdioma('es', this)">
+<span class="menu-lang-flag">🇪🇸</span>
+<span>Español</span>
+<svg class="menu-lang-check" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+</button>
+</li>
+
+</ul>
+
+</div>
+
+</div>
+
+<button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+</div>
+
+<div class="offcanvas-body d-flex flex-column">
+
+<a href="#home" class="menu-link" data-i18n="nav_home" onclick="return irParaSecao(event, 'home')">Início</a>
+<a href="#produtos" class="menu-link" data-i18n="nav_products" onclick="return irParaSecao(event, 'produtos')">Produtos</a>
+<a href="#contato" class="menu-link" data-i18n="nav_contact" onclick="return irParaSecao(event, 'contato')">Contato</a>
+
+<div id="menuAuthArea"></div>
+
+<div class="mt-auto" id="menuLogoutArea"></div>
+
+</div>
+
+</div>
+
+<!-- AUTH (Login + Cadastro em um único offcanvas, para evitar conflito de animação do Bootstrap) -->
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="authOffcanvas">
+
+<div class="offcanvas-header pb-0">
+<button
+type="button"
+class="btn-close ms-auto"
+data-bs-dismiss="offcanvas"> </button>
+</div>
+
+<div class="offcanvas-body pt-0">
+
+<!-- VIEW: LOGIN -->
+<div id="loginView">
+
+<div class="auth-header">
+<div class="auth-icon">
+<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></svg>
+</div>
+<h5 data-i18n="login_title">Bem-vindo de volta</h5>
+<p data-i18n="login_subtitle">Acesse sua conta para continuar</p>
+</div>
+
+<form id="loginForm" onsubmit="return handleLogin(event)" novalidate>
+
+<div class="mb-3">
+<label class="form-label" data-i18n="email_label">E-mail</label>
+<div class="input-group-auth">
+<span class="field-icon"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="M22 6 12 13 2 6"></path></svg></span>
+<input type="email" class="form-control" id="loginEmail" data-i18n-placeholder="email_placeholder" placeholder="seuemail@exemplo.com" required>
+</div>
+<div class="field-error" id="loginEmailError" data-i18n="error_email_invalid">Informe um e-mail válido.</div>
+</div>
+
+<div class="mb-2">
+<label class="form-label" data-i18n="password_label">Senha</label>
+<div class="input-group-auth">
+<span class="field-icon"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="5.5"></circle><path d="M21 2l-9.6 9.6"></path><path d="M15.5 7.5l3 3L22 7l-3-3"></path></svg></span>
+<input type="password" class="form-control" id="loginPassword" data-i18n-placeholder="password_placeholder" placeholder="Sua senha" required>
+<button type="button" class="toggle-visibility" onclick="toggleVisibility('loginPassword', this)"><svg class="eye-open" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"></path><circle cx="12" cy="12" r="3"></circle></svg><svg class="eye-closed d-none" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a20.3 20.3 0 0 1 5.06-5.94M9.9 4.24A10.94 10.94 0 0 1 12 4c7 0 11 7 11 7a20.3 20.3 0 0 1-2.16 3.19M14.12 14.12a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg></button>
+</div>
+<div class="field-error" id="loginPasswordError" data-i18n="error_password_required">Informe sua senha.</div>
+</div>
+
+<div class="d-flex justify-content-between align-items-center mb-3 mt-2">
+<div class="form-check">
+<input class="form-check-input" type="checkbox" id="lembrarMe">
+<label class="form-check-label" for="lembrarMe" data-i18n="remember_me">Lembrar-me</label>
+</div>
+<a href="#" class="forgot-link" data-i18n="forgot_password" onclick="mostrarToast('Recuperação de senha', 'Enviamos as instruções para o seu e-mail (simulação).', 'success'); return false;">Esqueceu a senha?</a>
+</div>
+
+<button type="submit" class="btn btn-primary btn-auth-submit" data-i18n="login_button">
+Entrar
+</button>
+
+<div class="auth-divider" data-i18n="new_here_divider">novo por aqui?</div>
+
+<div class="auth-switch">
+<span data-i18n="no_account_text">Ainda não tem conta?</span>
+<a href="#" data-i18n="create_account_link" onclick="mostrarAuthView('cadastro'); return false;">Criar conta grátis</a>
+</div>
+
+</form>
+
+</div>
+
+<!-- VIEW: CADASTRO -->
+<div id="cadastroView" class="d-none">
+
+<div class="auth-header">
+<div class="auth-icon">
+<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+</div>
+<h5 data-i18n="signup_title">Criar minha conta</h5>
+<p data-i18n="signup_subtitle">Leva menos de um minuto</p>
+</div>
+
+<form id="cadastroForm" onsubmit="return handleCadastro(event)" novalidate>
+
+<div class="mb-3">
+<label class="form-label" data-i18n="fullname_label">Nome completo</label>
+<div class="input-group-auth">
+<span class="field-icon"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></span>
+<input type="text" class="form-control" id="cadNome" data-i18n-placeholder="name_placeholder" placeholder="Seu nome" required>
+</div>
+<div class="field-error" id="cadNomeError" data-i18n="error_name_required">Informe seu nome.</div>
+</div>
+
+<div class="mb-3">
+<label class="form-label" data-i18n="email_label">E-mail</label>
+<div class="input-group-auth">
+<span class="field-icon"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="M22 6 12 13 2 6"></path></svg></span>
+<input type="email" class="form-control" id="cadEmail" data-i18n-placeholder="email_placeholder" placeholder="seuemail@exemplo.com" required>
+</div>
+<div class="field-error" id="cadEmailError" data-i18n="error_email_invalid">Informe um e-mail válido.</div>
+</div>
+
+<div class="mb-1">
+<label class="form-label" data-i18n="password_label">Senha</label>
+<div class="input-group-auth">
+<span class="field-icon"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="5.5"></circle><path d="M21 2l-9.6 9.6"></path><path d="M15.5 7.5l3 3L22 7l-3-3"></path></svg></span>
+<input type="password" class="form-control" id="cadSenha" data-i18n-placeholder="password_create_placeholder" placeholder="Crie uma senha forte" oninput="atualizarForcaSenha()" required>
+<button type="button" class="toggle-visibility" onclick="toggleVisibility('cadSenha', this)"><svg class="eye-open" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"></path><circle cx="12" cy="12" r="3"></circle></svg><svg class="eye-closed d-none" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a20.3 20.3 0 0 1 5.06-5.94M9.9 4.24A10.94 10.94 0 0 1 12 4c7 0 11 7 11 7a20.3 20.3 0 0 1-2.16 3.19M14.12 14.12a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg></button>
+</div>
+
+<div class="pwd-strength">
+<div class="pwd-strength-bars">
+<span id="bar1"></span>
+<span id="bar2"></span>
+<span id="bar3"></span>
+<span id="bar4"></span>
+</div>
+<span class="pwd-strength-label" id="pwdStrengthLabel" style="color:#94a3b8;" data-i18n="password_strength_default">Digite uma senha</span>
+
+<ul class="pwd-rules">
+<li id="ruleLen"><span class="rule-icon">○</span> <span data-i18n="rule_min_length">Mínimo de 8 caracteres</span></li>
+<li id="ruleUpper"><span class="rule-icon">○</span> <span data-i18n="rule_uppercase">Uma letra maiúscula</span></li>
+<li id="ruleLower"><span class="rule-icon">○</span> <span data-i18n="rule_lowercase">Uma letra minúscula</span></li>
+<li id="ruleNumber"><span class="rule-icon">○</span> <span data-i18n="rule_number">Um número</span></li>
+<li id="ruleSpecial"><span class="rule-icon">○</span> <span data-i18n="rule_special">Um caractere especial (!@#$%...)</span></li>
+</ul>
+</div>
+</div>
+
+<div class="mb-3 mt-3">
+<label class="form-label" data-i18n="confirm_password_label">Confirmar senha</label>
+<div class="input-group-auth">
+<span class="field-icon"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="5.5"></circle><path d="M21 2l-9.6 9.6"></path><path d="M15.5 7.5l3 3L22 7l-3-3"></path></svg></span>
+<input type="password" class="form-control" id="cadSenhaConfirm" data-i18n-placeholder="password_confirm_placeholder" placeholder="Repita a senha" oninput="validarConfirmacao()" required>
+<button type="button" class="toggle-visibility" onclick="toggleVisibility('cadSenhaConfirm', this)"><svg class="eye-open" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"></path><circle cx="12" cy="12" r="3"></circle></svg><svg class="eye-closed d-none" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a20.3 20.3 0 0 1 5.06-5.94M9.9 4.24A10.94 10.94 0 0 1 12 4c7 0 11 7 11 7a20.3 20.3 0 0 1-2.16 3.19M14.12 14.12a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg></button>
+</div>
+<div class="field-error" id="cadConfirmError" data-i18n="error_password_mismatch">As senhas não coincidem.</div>
+</div>
+
+<div class="form-check mb-3">
+<input class="form-check-input" type="checkbox" id="aceitarTermos" required>
+<label class="form-check-label" for="aceitarTermos" data-i18n="terms_text">
+Li e aceito os Termos de Uso e a Política de Privacidade
+</label>
+</div>
+
+<button type="submit" class="btn btn-primary btn-auth-submit" id="cadastroSubmitBtn" data-i18n="signup_button">
+Criar conta
+</button>
+
+<div class="auth-switch">
+<span data-i18n="has_account_text">Já tem conta?</span>
+<a href="#" data-i18n="login_link" onclick="mostrarAuthView('login'); return false;">Fazer login</a>
+</div>
+
+</form>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- CARRINHO -->
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="carrinho">
+
+<div class="offcanvas-header">
+<h5 class="fw-bold" data-i18n="cart_title">Seu Carrinho</h5>
+<button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+</div>
+
+<div class="offcanvas-body d-flex flex-column">
+
+<div id="cartItems" style="flex:1; overflow-y:auto;"></div>
+
+<div class="cart-summary" id="cartSummary" style="display:none;">
+<div class="total-row">
+<span data-i18n="cart_total_label">Total</span>
+<span id="cartTotal">R$ 0,00</span>
+</div>
+<button class="btn btn-primary w-100" onclick="finalizarCompra()" data-i18n="checkout_button">
+Finalizar Compra
+</button>
+</div>
+
+</div>
+
+</div>
+
+<!-- FAVORITOS -->
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="favoritos">
+
+<div class="offcanvas-header">
+<h5 class="fw-bold" data-i18n="fav_title">Meus Favoritos</h5>
+<button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+</div>
+
+<div class="offcanvas-body d-flex flex-column">
+
+<div id="favItems" style="flex:1; overflow-y:auto;"></div>
+
+</div>
+
+</div>
+
+<!-- MINHA CONTA -->
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="minhaConta">
+
+<div class="offcanvas-header">
+<h5 class="fw-bold" data-i18n="account_title">Minha Conta</h5>
+<button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+</div>
+
+<div class="offcanvas-body d-flex flex-column" id="minhaContaBody">
+<!-- preenchido via JS em renderMinhaConta() -->
+</div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+
+<script src="{% static 'js/script.js' %}"></script>
+
+</body>
+</html>

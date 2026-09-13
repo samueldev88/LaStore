@@ -1,0 +1,57 @@
+[
+  {
+    "model": "loja.produto",
+    "pk": 1,
+    "fields": {
+      "slug": "galaxy-a16",
+      "nome": "Samsung Galaxy A16 128GB",
+      "preco": "783.40",
+      "imagem_url": "https://horizonplay.fbitsstatic.net/img/p/smartphone-samsung-galaxy-a16-sm-a165m-dual-sim-de-128gb-4gb-ram-de-6-7-50-5-2mp-13mp-light-gray-152478/339081.jpg?w=670&h=670&v=202501231555",
+      "descricao": ""
+    }
+  },
+  {
+    "model": "loja.produto",
+    "pk": 2,
+    "fields": {
+      "slug": "galaxy-book-go",
+      "nome": "Samsung Galaxy Book Go",
+      "preco": "2789.10",
+      "imagem_url": "https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcTF6fMld_D76Q135TUOcxY_WT55fPdddpoz2CCiGW16uQ-2l4sKL_Lm_xfB4ng6LVjVs_negzHs_B8CIBebFWRwb944hF-o_VS5XSPoDG32-0N-1CF_nwsgCt_-OFv042NvxNtih0E9BWY&usqp=CAc",
+      "descricao": ""
+    }
+  },
+  {
+    "model": "loja.produto",
+    "pk": 3,
+    "fields": {
+      "slug": "smartwatch-fem",
+      "nome": "SmartWatch Feminino 1.83\"",
+      "preco": "122.90",
+      "imagem_url": "https://encrypted-tbn2.gstatic.com/shopping?q=tbn:ANd9GcSDHl7IGNN-c6VTKessWrzqLMX72WUH75_4E2bUFeJ4hO3MxTqA41mdZUwN_GTZT2Ot0Dv4WwpmY1N2ilcf4PkqiHlMtq92T5DcrvlVoA-Kic12PH2kKSZ5bWdzwJHIVbV1d8bzwg&usqp=CAc",
+      "descricao": ""
+    }
+  },
+  {
+    "model": "loja.produto",
+    "pk": 4,
+    "fields": {
+      "slug": "fone-bluetooth",
+      "nome": "Fone de Ouvido Bluetooth",
+      "preco": "149.90",
+      "imagem_url": "https://static.netshoes.com.br/produtos/fone-de-ouvido-sem-fio-jbl-tune-510bt-bluetooth-preto/06/N26-0772-006/N26-0772-006_zoom1.jpg?ts=1642594164&ims=1088x",
+      "descricao": ""
+    }
+  },
+  {
+    "model": "loja.produto",
+    "pk": 5,
+    "fields": {
+      "slug": "notebook-ultra-slim",
+      "nome": "Notebook Ultra Slim",
+      "preco": "3499.00",
+      "imagem_url": "https://img.global.news.samsung.com/br/wp-content/uploads/2021/05/Samsung_Book_Dark_Gray-1-1024x683.jpg",
+      "descricao": ""
+    }
+  }
+]

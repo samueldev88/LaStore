@@ -1,0 +1,291 @@
+/* Painel da equipe — reaproveita a paleta de marca do style.css do site
+   (mesmos valores das variáveis --primary/--secondary/--success/--danger/
+   --warning/--text), pra ter a cara do LaStore em vez do visual padrão
+   do Django admin. */
+
+:root{
+  --painel-primary: #0f172a;
+  --painel-secondary: #1e293b;
+  --painel-success: #10b981;
+  --painel-danger: #ef4444;
+  --painel-warning: #f59e0b;
+  --painel-info: #93c5fd;
+  --painel-text: #475569;
+  --painel-bg: #f1f5f9;
+}
+
+*{ box-sizing: border-box; }
+
+body{
+  margin: 0;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background: var(--painel-bg);
+  color: var(--painel-text);
+}
+
+.painel-layout{
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ===== SIDEBAR ===== */
+
+.painel-sidebar{
+  width: 240px;
+  flex-shrink: 0;
+  background: var(--painel-primary);
+  color: #fff;
+  padding: 1.5rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: .25rem;
+}
+
+.painel-brand{
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #fff;
+  text-decoration: none;
+  margin-bottom: 2rem;
+  padding: 0 .5rem;
+}
+
+.painel-brand span{
+  color: var(--painel-info);
+}
+
+.painel-nav-link{
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  padding: .65rem .75rem;
+  border-radius: 10px;
+  color: rgba(255,255,255,.75);
+  text-decoration: none;
+  font-size: .92rem;
+  transition: background-color .12s ease, color .12s ease;
+}
+
+.painel-nav-link:hover{
+  background: rgba(255,255,255,.08);
+  color: #fff;
+}
+
+.painel-nav-link.active{
+  background: var(--painel-secondary);
+  color: #fff;
+  font-weight: 600;
+}
+
+.painel-nav-link svg{ flex-shrink: 0; }
+
+.painel-sidebar-footer{
+  margin-top: auto;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255,255,255,.12);
+  font-size: .82rem;
+  color: rgba(255,255,255,.55);
+}
+
+.painel-sidebar-footer a{
+  color: var(--painel-info);
+  text-decoration: none;
+}
+
+/* ===== CONTEÚDO ===== */
+
+.painel-main{
+  flex: 1;
+  padding: 2rem 2.5rem;
+}
+
+.painel-header{
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 1.75rem;
+  flex-wrap: wrap;
+  gap: .5rem;
+}
+
+.painel-header h1{
+  font-size: 1.5rem;
+  color: var(--painel-primary);
+  margin: 0;
+}
+
+.painel-header p{
+  margin: .2rem 0 0;
+  font-size: .9rem;
+}
+
+/* cards de estatística */
+
+.painel-stats{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.painel-stat-card{
+  background: #fff;
+  border-radius: 14px;
+  padding: 1.1rem 1.3rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,.06);
+}
+
+.painel-stat-label{
+  font-size: .8rem;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--painel-text);
+  margin: 0 0 .4rem;
+}
+
+.painel-stat-value{
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--painel-primary);
+  margin: 0;
+}
+
+/* painéis / cartões de conteúdo */
+
+.painel-card{
+  background: #fff;
+  border-radius: 14px;
+  padding: 1.4rem 1.5rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,.06);
+  margin-bottom: 1.5rem;
+}
+
+.painel-card h2{
+  font-size: 1.05rem;
+  color: var(--painel-primary);
+  margin: 0 0 1rem;
+}
+
+.painel-chart-wrap{
+  position: relative;
+  height: 260px;
+}
+
+/* tabelas */
+
+.painel-table{
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .9rem;
+}
+
+.painel-table th{
+  text-align: left;
+  font-size: .78rem;
+  text-transform: uppercase;
+  letter-spacing: .03em;
+  color: var(--painel-text);
+  padding: .6rem .5rem;
+  border-bottom: 2px solid var(--painel-bg);
+}
+
+.painel-table td{
+  padding: .7rem .5rem;
+  border-bottom: 1px solid var(--painel-bg);
+  vertical-align: middle;
+}
+
+.painel-table tbody tr:hover{
+  background: var(--painel-bg);
+}
+
+/* selo de status */
+
+.status-badge{
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  padding: .3rem .65rem;
+  border-radius: 999px;
+  font-size: .78rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.status-badge::before{
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.status-recebido{ background: rgba(245,158,11,.12); color: var(--painel-warning); }
+.status-separacao{ background: rgba(147,197,253,.16); color: #3b82f6; }
+.status-enviado{ background: rgba(147,197,253,.16); color: #3b82f6; }
+.status-entregue{ background: rgba(16,185,129,.12); color: var(--painel-success); }
+
+/* filtro e formulário inline de status */
+
+.painel-filtros{
+  display: flex;
+  gap: .5rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.painel-filtro-link{
+  padding: .4rem .85rem;
+  border-radius: 999px;
+  font-size: .85rem;
+  text-decoration: none;
+  color: var(--painel-text);
+  background: #fff;
+  border: 1px solid rgba(0,0,0,.08);
+}
+
+.painel-filtro-link.active{
+  background: var(--painel-primary);
+  color: #fff;
+  border-color: var(--painel-primary);
+}
+
+.status-form{
+  display: flex;
+  gap: .4rem;
+  align-items: center;
+}
+
+.status-form select{
+  font-size: .82rem;
+  padding: .3rem .5rem;
+  border-radius: 8px;
+  border: 1px solid rgba(0,0,0,.15);
+}
+
+.status-form button{
+  font-size: .8rem;
+  padding: .3rem .7rem;
+  border-radius: 8px;
+  border: none;
+  background: var(--painel-primary);
+  color: #fff;
+  cursor: pointer;
+}
+
+.status-form button:hover{
+  background: var(--painel-secondary);
+}
+
+.painel-empty{
+  text-align: center;
+  color: var(--painel-text);
+  padding: 2rem 0;
+}
+
+@media (max-width: 780px){
+  .painel-layout{ flex-direction: column; }
+  .painel-sidebar{ width: 100%; flex-direction: row; overflow-x: auto; }
+  .painel-brand, .painel-sidebar-footer{ display: none; }
+  .painel-main{ padding: 1.25rem; }
+}

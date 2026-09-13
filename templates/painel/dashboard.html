@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard — Painel LaStore</title>
+<link rel="stylesheet" href="{% static 'css/painel.css' %}">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+</head>
+<body>
+
+<div class="painel-layout">
+
+{% include 'painel/_sidebar.html' %}
+
+<main class="painel-main">
+
+<div class="painel-header">
+<div>
+<h1>Dashboard</h1>
+<p>Visão geral da loja</p>
+</div>
+</div>
+
+<div class="painel-stats">
+<div class="painel-stat-card">
+<p class="painel-stat-label">Total vendido</p>
+<p class="painel-stat-value">R$ {{ total_vendido|floatformat:2 }}</p>
+</div>
+<div class="painel-stat-card">
+<p class="painel-stat-label">Pedidos neste mês</p>
+<p class="painel-stat-value">{{ pedidos_no_mes }}</p>
+</div>
+<div class="painel-stat-card">
+<p class="painel-stat-label">Total de pedidos</p>
+<p class="painel-stat-value">{{ total_pedidos }}</p>
+</div>
+<div class="painel-stat-card">
+<p class="painel-stat-label">Produtos cadastrados</p>
+<p class="painel-stat-value">{{ total_produtos }}</p>
+</div>
+<div class="painel-stat-card">
+<p class="painel-stat-label">Produtos em oferta</p>
+<p class="painel-stat-value">{{ produtos_em_oferta }}</p>
+</div>
+</div>
+
+<div class="painel-card">
+<h2>Produtos mais vendidos</h2>
+{% if mais_vendidos %}
+<div class="painel-chart-wrap">
+<canvas id="graficoMaisVendidos"></canvas>
+</div>
+{% else %}
+<p class="painel-empty">Ainda não há vendas registradas.</p>
+{% endif %}
+</div>
+
+<div class="painel-card">
+<h2>Pedidos recentes</h2>
+{% if pedidos_recentes %}
+<table class="painel-table">
+<thead>
+<tr>
+<th>#</th>
+<th>Cliente</th>
+<th>Total</th>
+<th>Status</th>
+<th>Data</th>
+</tr>
+</thead>
+<tbody>
+{% for pedido in pedidos_recentes %}
+<tr>
+<td>#{{ pedido.id }}</td>
+<td>{{ pedido.usuario.first_name|default:pedido.usuario.username }}</td>
+<td>R$ {{ pedido.total|floatformat:2 }}</td>
+<td><span class="status-badge status-{{ pedido.status }}">{{ pedido.get_status_display }}</span></td>
+<td>{{ pedido.criado_em|date:"d/m/Y H:i" }}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+{% else %}
+<p class="painel-empty">Ainda não há pedidos.</p>
+{% endif %}
+</div>
+
+</main>
+</div>
+
+{% if mais_vendidos %}
+{{ mais_vendidos|json_script:"dados-mais-vendidos" }}
+<script>
+  const dadosMaisVendidos = JSON.parse(document.getElementById('dados-mais-vendidos').textContent);
+
+  new Chart(document.getElementById('graficoMaisVendidos'), {
+    type: 'bar',
+    data: {
+      labels: dadosMaisVendidos.map(item => item.nome_produto),
+      datasets: [{
+        label: 'Unidades vendidas',
+        data: dadosMaisVendidos.map(item => item.quantidade_total),
+        backgroundColor: '#0f172a',
+        borderRadius: 6,
+        maxBarThickness: 48
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+    }
+  });
+</script>
+{% endif %}
+
+</body>
+</html>
