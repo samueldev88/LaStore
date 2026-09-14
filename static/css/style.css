@@ -1134,6 +1134,33 @@ footer{
     padding:10px 18px 10px 10px;
 }
 
+/* Ícones da navbar (busca, favoritos, carrinho, menu) — no desktop o
+   tamanho atual (42px) é ok, mas no celular fica pequeno perto do resto
+   da interface. Aumentamos o botão e o ícone dentro dele. */
+.nav-icons{
+    gap:8px;
+}
+
+.icon-btn{
+    width:46px;
+    height:46px;
+    border-radius:11px;
+}
+
+.icon-btn svg{
+    width:23px;
+    height:23px;
+}
+
+#menuToggleBtn svg{
+    width:25px;
+    height:25px;
+}
+
+.cart-badge{
+    font-size:.7rem;
+}
+
 }
 
 @media(max-width:400px){
