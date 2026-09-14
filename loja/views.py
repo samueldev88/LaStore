@@ -1,4 +1,4 @@
-from date import date
+from datetime import date
 from functools import wraps
 
 from django.contrib.auth import authenticate, login, logout
