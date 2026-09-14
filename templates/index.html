@@ -749,7 +749,7 @@ Ver Produtos
 
 <div class="offers-carousel" id="offersCarousel">
 
-{% for produto in produtos|slice:":8" %}
+{% for produto in ofertas|slice:":8" %}
 <div class="offer-card" onclick="abrirDetalhesProduto(event)">
 
 <span class="offer-badge" data-i18n="offer_badge">Oferta do dia</span>
@@ -772,7 +772,7 @@ title="Favoritar">
 <h3 class="offer-card-title">{{ produto.nome }}</h3>
 <p class="offer-card-price">
 <span class="offer-price-old" data-price-old="{{ produto.preco }}">{{ produto.preco_fmt }}</span>
-<span class="offer-price-new"></span>
+<span class="offer-price-new">{{ produto.preco_oferta_fmt }}</span>
 </p>
 
 <button
@@ -780,7 +780,7 @@ class="btn btn-cart-offer w-100"
 onclick="event.stopPropagation(); addToCart(this)"
 data-id="{{ produto.id }}"
 data-name="{{ produto.nome }}"
-data-price="{{ produto.preco }}"
+data-price="{{ produto.preco_com_desconto|default:produto.preco }}"
 data-img="{{ produto.imagem_url }}">
 <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
 <span data-i18n="add_to_cart">Adicionar ao Carrinho</span>
@@ -895,16 +895,23 @@ class="card-img-top">
 {{ produto.nome }}
 </h5>
 
+{% if produto.em_oferta %}
+<p class="price price-has-offer">
+<span class="price-old">{{ produto.preco_fmt }}</span>
+<span class="price-new">{{ produto.preco_oferta_fmt }}</span>
+</p>
+{% else %}
 <p class="price">
 {{ produto.preco_fmt }}
 </p>
+{% endif %}
 
 <button
 class="btn btn-cart mt-auto"
 onclick="event.stopPropagation(); addToCart(this)"
 data-id="{{ produto.id }}"
 data-name="{{ produto.nome }}"
-data-price="{{ produto.preco }}"
+data-price="{{ produto.preco_com_desconto|default:produto.preco }}"
 data-img="{{ produto.imagem_url }}">
 <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
 <span data-i18n="add_to_cart">Adicionar ao Carrinho</span>
