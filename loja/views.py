@@ -1,4 +1,4 @@
-from datetime import date
+from date import date
 from functools import wraps
 
 from django.contrib.auth import authenticate, login, logout
@@ -38,6 +38,13 @@ def index(request):
     for p in produtos:
         # Formatação simples de moeda BR (R$ 1.234,56) só pra exibição.
         p.preco_fmt = formatar_preco(p.preco)
+        # Produtos em oferta também precisam do preço com desconto
+        # formatado aqui, senão a grade "Produtos em Destaque" mostra só
+        # o preço riscado (preco_fmt) e o preço vermelho (preco_oferta_fmt)
+        # fica vazio no template, já que esse campo nunca era calculado
+        # nesse loop antes.
+        if p.em_oferta:
+            p.preco_oferta_fmt = formatar_preco(p.preco_com_desconto)
 
     ofertas = list(Produto.objects.filter(em_oferta=True))
     for o in ofertas:
