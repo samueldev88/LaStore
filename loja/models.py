@@ -17,7 +17,7 @@ class Produto(models.Model):
 
     slug = models.SlugField(max_length=60, unique=True)
     nome = models.CharField(max_length=200)
-    preco = models.DecimalField(max_digits=10, decimal_places=2)
+    preco = models.DecimalField(max_digits=12, decimal_places=2)
     imagem_url = models.URLField(max_length=500)
     descricao = models.TextField(blank=True)
     categoria = models.CharField(max_length=20, choices=CATEGORIA_CHOICES, default='celular')
@@ -73,7 +73,7 @@ class Pedido(models.Model):
 
     usuario = models.ForeignKey(User, related_name='pedidos', on_delete=models.CASCADE)
     criado_em = models.DateTimeField(auto_now_add=True)
-    total = models.DecimalField(max_digits=10, decimal_places=2)
+    total = models.DecimalField(max_digits=12, decimal_places=2)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='recebido')
 
     class Meta:
@@ -93,7 +93,7 @@ class ItemPedido(models.Model):
     pedido = models.ForeignKey(Pedido, related_name='itens', on_delete=models.CASCADE)
     produto = models.ForeignKey(Produto, null=True, blank=True, on_delete=models.SET_NULL)
     nome_produto = models.CharField(max_length=200)
-    preco_unitario = models.DecimalField(max_digits=10, decimal_places=2)
+    preco_unitario = models.DecimalField(max_digits=12, decimal_places=2)
     quantidade = models.PositiveIntegerField(default=1)
 
     def __str__(self):
